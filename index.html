@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Título -->
+        <title>Busca RUT</title>
+
+        <!-- Charset -->
+        <meta charset="UTF-8">
+
+        <!-- Viewport -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <!-- Bootstrap 4 CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+        <!-- Tema "LUX" -->
+        <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.1/lux/bootstrap.min.css" rel="stylesheet" integrity="sha384-4KIc2mnKfAA7VjirNLk2Sqp7jxFNq1q8+FhYGxhW2l52lt4HJsfksL+hjswHfbl/" crossorigin="anonymous">
+
+        <!-- CSS -->
+        <style type="text/css">
+            html, body {
+                height: auto;
+            }
+            .jumbotron {
+                background-color: white;
+            }
+            .container {
+                margin-top: 80px;
+            }
+            #txtRut {
+                width: 20%; padding: 12px 20px; margin: 8px 0; box-sizing: border-box; border: 2px solid black; border-radius: 4px; text-align: center
+            }
+            .capitalize {
+                text-transform: capitalize;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Container -->
+        <div class="container shadow-lg p-3 mb-5 bg-white rounded" align="center">
+            <!-- Jumbotron -->
+            <div class="jumbotron">
+
+                <h1>Buscar por RUT</h1>
+
+                <p class="lead">Usted debe introducir un RUT para que le demos el nombre. Ej: 123456789</p>
+
+                <input id="txtRut" name="txtRut" type="text" size="20" maxlength="12" border="1px" autofocus />
+
+                <br>
+
+                <div id="barra"></div>
+
+                <table id="tabla">
+                    <thead class="thead-dark">
+                        <tr align="center">
+                            <th><div id="headRut"></div></th>
+                            <th><div id="headNombre"></div></th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="table-light">
+                        <tr align="center">
+                            <td><div id="bodyRut"></div></td>
+                            <td><div id="bodyNombre" class="capitalize"></div></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div align="right"><i>Datos obtenidos por la API pública de SII.</i></div>
+
+        </div>
+
+        <!-- JQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+        <!-- Funciones JQuery -->
+        <script>
+            $(document).ready(function () {
+
+                /* Devolver el nombre mediante el RUT */
+                // Se declaran variables globales
+                var rut, nombre;
+                // Se crea la función click del botón "Aceptar"
+                $("#txtRut").blur(function () {
+                    // Se crea una barra separadora
+                    $("#barra").html("<hr class='my-4'></hr>");
+                    // Se hace la consulta GET a API SII
+                    rut = document.getElementById("txtRut").value;
+                    jQuery.getJSON('https://siichile.herokuapp.com/consulta', {rut: rut}, function (result) {
+                        console.log(result);
+                        nombre = result["razon_social"];
+                        $("#bodyNombre").text(nombre);
+                    });
+                    // Se setean los datos en la tabla
+                    $("#headRut").text("RUT");
+                    $("#headNombre").text("Nombre");
+                    $("#bodyRut").text(rut);
+                    $("#tabla").addClass("table");
+                });
+
+                /* Solo números */
+                $("#txtRut").on('input', function () {
+                    this.value = this.value.replace(/[^0-9]/g, '');
+                });
+
+            });
+        </script>
+    </body>
+</html>
